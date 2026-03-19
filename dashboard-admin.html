@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - NattDev Payment System</title>
+    <title>Admin Dashboard - NattDev Payment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -28,22 +28,31 @@
             overflow-y: auto;
             z-index: 50;
         }
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
         .sidebar-item {
-            padding: 12px 16px;
+            padding: 12px;
             margin: 0.5rem 0;
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.3s;
             color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            display: block;
             font-weight: 500;
         }
         .sidebar-item:hover, .sidebar-item.active {
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
+            transform: translateX(4px);
         }
         .main-content {
             margin-left: 260px;
@@ -69,8 +78,8 @@
             transition: all 0.3s;
         }
         .stat-card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transform: translateY(-4px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .stat-value {
             font-size: 2rem;
@@ -90,6 +99,7 @@
             border-radius: 0.75rem;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
         }
         table {
             width: 100%;
@@ -112,7 +122,7 @@
         }
         .badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 6px 12px;
             border-radius: 9999px;
             font-size: 0.85rem;
             font-weight: 600;
@@ -130,73 +140,82 @@
             color: #dc2626;
         }
         .badge-info {
-            background-color: #dbeafe;
-            color: #0c4a6e;
+            background-color: #cffafe;
+            color: #0e7490;
         }
         .btn {
-            padding: 8px 16px;
-            border-radius: 0.375rem;
-            font-size: 0.9rem;
+            padding: 10px 16px;
+            border-radius: 0.5rem;
+            font-weight: 600;
             cursor: pointer;
             border: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .btn-primary {
             background-color: #6366f1;
             color: white;
-            transition: all 0.3s;
-            font-weight: 500;
         }
-        .btn:hover {
+        .btn-primary:hover {
             background-color: #4f46e5;
-            transform: translateY(-2px);
-        }
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.85rem;
-        }
-        .btn-secondary {
-            background-color: #8b5cf6;
-        }
-        .btn-secondary:hover {
-            background-color: #7c3aed;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
+            transform: scale(1.02);
         }
         .btn-success {
             background-color: #10b981;
+            color: white;
         }
         .btn-success:hover {
             background-color: #059669;
         }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .input-field, .select-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .input-field:focus, .select-field:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
         .modal {
             display: none;
             position: fixed;
-            z-index: 100;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s ease;
-        }
-        .modal.show {
-            display: flex;
+            z-index: 100;
             align-items: center;
             justify-content: center;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .modal.active {
+            display: flex;
         }
         .modal-content {
             background: white;
+            border-radius: 1rem;
             padding: 2rem;
-            border-radius: 0.75rem;
+            max-width: 500px;
             width: 90%;
-            max-width: 600px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
             animation: slideUp 0.3s ease;
         }
         @keyframes slideUp {
@@ -209,6 +228,15 @@
                 transform: translateY(0);
             }
         }
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
         .form-group {
             margin-bottom: 1rem;
         }
@@ -218,47 +246,52 @@
             margin-bottom: 0.5rem;
             color: #1f2937;
         }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            font-size: 0.9rem;
-        }
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        .search-bar {
-            margin-bottom: 1.5rem;
+        .modal-footer {
             display: flex;
             gap: 1rem;
+            justify-content: flex-end;
         }
-        .search-bar input {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            font-size: 0.9rem;
+        .success-message, .error-message {
+            padding: 12px;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        .success-message {
+            background-color: #dcfce7;
+            color: #15803d;
+            border-left: 4px solid #15803d;
+        }
+        .error-message {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+        .success-message.show, .error-message.show {
+            display: block;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         @media (max-width: 768px) {
             .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
                 width: 200px;
             }
+            .sidebar.active {
+                transform: translateX(0);
+            }
             .main-content {
-                margin-left: 200px;
+                margin-left: 0;
                 padding: 1rem;
             }
         }
@@ -266,49 +299,720 @@
 </head>
 <body>
 
-<!-- ==================== SIDEBAR ==================== -->
-<div class="sidebar">
-    <div style="font-size: 2rem; margin-bottom: 1.5rem; text-align: center;">💳</div>
-    <h2 style="font-weight: bold; margin-bottom: 2rem; font-size: 1.3rem;">Admin Panel</h2>
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💳</div>
+        <h2 style="font-weight: bold; font-size: 1.2rem;">NattDev</h2>
+        <p style="font-size: 0.8rem; opacity: 0.8;">Admin System</p>
+    </div>
     
     <nav>
-        <a href="#" class="sidebar-item active" onclick="switchTab('dashboard', event)">
+        <a href="#" class="sidebar-item active" data-tab="dashboard">
             📊 Dashboard
         </a>
-        <a href="#" class="sidebar-item" onclick="switchTab('shops', event)">
+        <a href="#" class="sidebar-item" data-tab="shops">
             🏪 ร้านค้า
         </a>
-        <a href="#" class="sidebar-item" onclick="switchTab('users', event)">
-            👥 ผู้ใช้
-        </a>
-        <a href="#" class="sidebar-item" onclick="switchTab('affiliates', event)">
+        <a href="#" class="sidebar-item" data-tab="affiliates">
             🤝 Affiliate
         </a>
-        <a href="#" class="sidebar-item" onclick="switchTab('payments', event)">
+        <a href="#" class="sidebar-item" data-tab="payments">
             💰 Transactions
         </a>
-        <a href="#" class="sidebar-item" onclick="switchTab('commissions', event)">
-            💸 Commission
+        <a href="#" class="sidebar-item" data-tab="users">
+            👥 ผู้ใช้งาน
         </a>
-        <a href="#" class="sidebar-item" onclick="switchTab('settings', event)">
+        <a href="#" class="sidebar-item" data-tab="settings">
             ⚙️ Settings
         </a>
     </nav>
 
-    <div style="margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.2);">
-        <p style="font-size: 0.85rem; opacity: 0.8;">👤 Admin Account</p>
-        <p style="font-weight: 600; margin-bottom: 1rem;">oil166922@gmail.com</p>
-        <button onclick="logout()" style="width: 100%; padding: 0.75rem; background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: white; border-radius: 0.375rem; cursor: pointer; font-weight: 500; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'">
+    <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.5rem;">👤 Logged in as</p>
+        <p style="font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem;" id="adminEmail">admin</p>
+        <button onclick="logout()" style="width: 100%; padding: 8px; background-color: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: white; border-radius: 0.375rem; cursor: pointer; font-weight: 500; transition: all 0.3s;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.2)'">
             🚪 Logout
         </button>
     </div>
 </div>
 
-<!-- ==================== MAIN CONTENT ==================== -->
+<!-- Main Content -->
 <div class="main-content">
-
-    <!-- ========== HEADER ========== -->
+    <!-- Header -->
     <div class="header">
         <div>
-            <h1 style="font-size: 2rem; font-weight: bold; color: #1f2937;">Admin Dashboard</h1>
-            <p style="color: #6b7280; margin-top: 0.25rem;">ยินดีต้อนรับกลับมา, ผ*
+            <h1 style="font-size: 2rem; font-weight: bold; color: #1f2937;">Control Panel</h1>
+            <p style="color: #6b7280; margin-top: 0.25rem;">ยินดีต้อนรับ Admin 👋</p>
+        </div>
+        <div style="text-align: right;">
+            <p style="color: #6b7280;">วันนี้: <strong id="todayDate"></strong></p>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="successMessage" class="success-message"></div>
+    <div id="errorMessage" class="error-message"></div>
+
+    <!-- Dashboard Tab -->
+    <div id="dashboard-content" class="tab-content">
+        <!-- Stats Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="stat-card">
+                <div style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">ร้านค้าทั้งหมด</div>
+                <div class="stat-value" id="totalShops">1,234</div>
+                <div class="stat-label">↑ +12% from last month</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #10b981;">
+                <div style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">ยอดเงินรวม</div>
+                <div class="stat-value" style="color: #10b981;" id="totalRevenue">฿5.2M</div>
+                <div class="stat-label">↑ +25% from last month</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #f59e0b;">
+                <div style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">Commission ต้องจ่าย</div>
+                <div class="stat-value" style="color: #f59e0b;" id="totalCommission">฿125K</div>
+                <div class="stat-label">↑ +8% from last month</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #ec4899;">
+                <div style="color: #6b7280; font-size: 0.9rem; font-weight: 500;">ผู้ใช้ทั้งหมด</div>
+                <div class="stat-value" style="color: #ec4899;" id="totalUsers">2,456</div>
+                <div class="stat-label">↑ +18% from last month</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="table-container" style="padding: 1.5rem;">
+                <h3 style="font-weight: bold; margin-bottom: 1rem;">📈 รายได้ 7 วันล่าสุด</h3>
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="table-container" style="padding: 1.5rem;">
+                <h3 style="font-weight: bold; margin-bottom: 1rem;">🔄 Transactions</h3>
+                <canvas id="transactionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Data -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 1rem;">
+            <div class="table-container">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+                    <h3 style="font-weight: bold;">🏪 ร้านค้าใหม่ล่าสุด</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ชื่อร้าน</th>
+                            <th>สถานะ</th>
+                            <th>ยอดรับ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentShopsTable">
+                        <tr>
+                            <td><strong>ร้านกาแฟ A</strong></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td>฿125,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+                    <h3 style="font-weight: bold;">💰 Transactions ล่าสุด</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>จำนวน</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentTransactionsTable">
+                        <tr>
+                            <td>#TXN-001</td>
+                            <td>฿5,500</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shops Tab -->
+    <div id="shops-content" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.5rem; font-weight: bold;">🏪 จัดการร้านค้า</h2>
+            <button class="btn btn-primary" onclick="openShopModal()">➕ สมัครร้านค้าใหม่</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชื��อร้าน</th>
+                        <th>เจ้าของ</th>
+                        <th>Plan</th>
+                        <th>ยอดรับ</th>
+                        <th>สถานะ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="shopsTable">
+                    <tr>
+                        <td><strong>ร้านกาแฟ A</strong></td>
+                        <td>สมชาย</td>
+                        <td>Pro</td>
+                        <td>฿125,000</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="editShop(1)">Edit</button>
+                            <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 4px;" onclick="deleteShop(1)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Affiliates Tab -->
+    <div id="affiliates-content" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.5rem; font-weight: bold;">🤝 จัดการ Affiliate</h2>
+            <button class="btn btn-primary" onclick="openAffiliateModal()">➕ เพิ่ม Affiliate</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ชื่อ</th>
+                        <th>Email</th>
+                        <th>ลูกค้า</th>
+                        <th>Commission</th>
+                        <th>สถานะ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="affiliatesTable">
+                    <tr>
+                        <td>#AFF-001</td>
+                        <td>นวม</td>
+                        <td>noom@example.com</td>
+                        <td>12</td>
+                        <td>฿35,800</td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Payments Tab -->
+    <div id="payments-content" class="tab-content" style="display: none;">
+        <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem;">💰 ประวัติ Transactions</h2>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>ร้านค้า</th>
+                        <th>จำนวน</th>
+                        <th>สถานะ</th>
+                        <th>วันที่</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="paymentsTable">
+                    <tr>
+                        <td>#TXN-2026-001</td>
+                        <td>��้านกาแฟ A</td>
+                        <td>฿5,500</td>
+                        <td><span class="badge badge-success">Completed</span></td>
+                        <td>2 June 2026 11:30</td>
+                        <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Details</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div id="users-content" class="tab-content" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.5rem; font-weight: bold;">👥 จัดการผู้ใช้งาน</h2>
+            <button class="btn btn-primary" onclick="openUserModal()">➕ เพิ่มผู้ใช้งาน</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>ชื่อ</th>
+                        <th>Role</th>
+                        <th>สถานะ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable">
+                    <tr>
+                        <td>user1@example.com</td>
+                        <td>สมชาย</td>
+                        <td><span class="badge badge-info">Shop Owner</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button>
+                            <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 4px;">Ban</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings-content" class="tab-content" style="display: none;">
+        <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem;">⚙️ ตั้งค่าระบบ</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+            <!-- Telegram Settings -->
+            <div class="table-container" style="padding: 1.5rem;">
+                <h3 style="font-weight: bold; margin-bottom: 1rem;">🤖 Telegram Bot</h3>
+                <div class="form-group">
+                    <label>Bot Token</label>
+                    <input type="password" id="telegramToken" class="input-field" placeholder="Enter Telegram Bot Token">
+                </div>
+                <div class="form-group">
+                    <label>Chat ID</label>
+                    <input type="text" id="telegramChatId" class="input-field" placeholder="Chat ID for notifications">
+                </div>
+                <button class="btn btn-primary" onclick="saveTelegramSettings()">💾 บันทึก</button>
+            </div>
+
+            <!-- Slip OCR Settings -->
+            <div class="table-container" style="padding: 1.5rem;">
+                <h3 style="font-weight: bold; margin-bottom: 1rem;">🎫 Slip OCR API</h3>
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="password" id="slipOcrKey" class="input-field" placeholder="Enter Slip OCR API Key">
+                </div>
+                <div class="form-group">
+                    <label>API URL</label>
+                    <input type="text" id="slipOcrUrl" class="input-field" placeholder="Enter API URL">
+                </div>
+                <button class="btn btn-primary" onclick="saveSlipOcrSettings()">💾 บันทึก</button>
+            </div>
+
+            <!-- Stripe Settings -->
+            <div class="table-container" style="padding: 1.5rem;">
+                <h3 style="font-weight: bold; margin-bottom: 1rem;">💳 Stripe Configuration</h3>
+                <div class="form-group">
+                    <label>Public Key</label>
+                    <input type="password" id="stripePublic" class="input-field" placeholder="pk_test_xxx">
+                </div>
+                <div class="form-group">
+                    <label>Secret Key</label>
+                    <input type="password" id="stripeSecret" class="input-field" placeholder="sk_test_xxx">
+                </div>
+                <button class="btn btn-primary" onclick="saveStripeSettings()">💾 บันทึก</button>
+            </div>
+
+            <!-- Commission Settings -->
+            <div class="table-container" style="padding: 1.5rem;">
+                <h3 style="font-weight: bold; margin-bottom: 1rem;">💰 Commission Rate</h3>
+                <div class="form-group">
+                    <label>Affiliate Commission % (Pro Plan)</label>
+                    <input type="number" id="affiliateRate" class="input-field" placeholder="30" value="30">
+                </div>
+                <div class="form-group">
+                    <label>Monthly Subscription Price</label>
+                    <input type="number" id="subscriptionPrice" class="input-field" placeholder="99" value="99">
+                </div>
+                <button class="btn btn-primary" onclick="saveCommissionSettings()">💾 บันทึก</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add/Edit Shop -->
+<div id="shopModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">🏪 สมัครร้านค้าใหม่</div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>ชื่อร้าน</label>
+                <input type="text" id="shopName" class="input-field" placeholder="เช่น ร้านกาแฟ A">
+            </div>
+            <div class="form-group">
+                <label>Email เจ้าของ</label>
+                <input type="email" id="shopEmail" class="input-field" placeholder="owner@example.com">
+            </div>
+            <div class="form-group">
+                <label>PromptPay Account</label>
+                <input type="text" id="shopPromptPay" class="input-field" placeholder="เบอร์โทร/หมายเลขบัตรประชาชน">
+            </div>
+            <div class="form-group">
+                <label>Plan</label>
+                <select id="shopPlan" class="select-field">
+                    <option value="free">Free</option>
+                    <option value="pro" selected>Pro (฿99/เดือน)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>รหัสผ่าน (สำหรับร้านค้า)</label>
+                <input type="password" id="shopPassword" class="input-field" placeholder="Auto generate if empty">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeShopModal()">ยกเลิก</button>
+            <button class="btn btn-primary" onclick="saveShop()">✅ สมัครให้ใช้งาน</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add Affiliate -->
+<div id="affiliateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">🤝 เพิ่ม Affiliate</div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>ชื่อ</label>
+                <input type="text" id="affiliateName" class="input-field" placeholder="ชื่อสมาชิก">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="affiliateEmail" class="input-field" placeholder="affiliate@example.com">
+            </div>
+            <div class="form-group">
+                <label>จำนวน Commission เบื้องต้น</label>
+                <input type="number" id="affiliateBalance" class="input-field" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label>รหัสผ่าน</label>
+                <input type="password" id="affiliatePassword" class="input-field" placeholder="Auto generate if empty">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeAffiliateModal()">ยกเลิก</button>
+            <button class="btn btn-primary" onclick="saveAffiliate()">✅ เพิ่ม Affiliate</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add User -->
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">👥 เพิ่มผู้ใช้งาน</div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="userName" class="input-field" placeholder="user@example.com">
+            </div>
+            <div class="form-group">
+                <label>ชื่อ</label>
+                <input type="text" id="userFullName" class="input-field" placeholder="ชื่อเต็ม">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="userRole" class="select-field">
+                    <option value="shop">Shop Owner</option>
+                    <option value="affiliate">Affiliate</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>รหัสผ่าน</label>
+                <input type="password" id="userPassword" class="input-field" placeholder="Auto generate if empty">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeUserModal()">ยกเลิก</button>
+            <button class="btn btn-primary" onclick="saveUser()">✅ สร้างบัญชี</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDate();
+        loadAdminEmail();
+        setupTabSwitching();
+        initCharts();
+    });
+
+    // Tab Switching
+    function setupTabSwitching() {
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tab = this.getAttribute('data-tab');
+                
+                // Hide all
+                document.querySelectorAll('.tab-content').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Show selected
+                document.getElementById(tab + '-content').style.display = 'block';
+                
+                // Update active
+                document.querySelectorAll('.sidebar-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    }
+
+    // Update Date
+    function updateDate() {
+        const now = new Date();
+        const thai = new Intl.DateTimeFormat('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).format(now);
+        document.getElementById('todayDate').textContent = thai;
+    }
+
+    // Load Admin Email
+    function loadAdminEmail() {
+        const email = localStorage.getItem('userEmail') || 'admin@nattdev.com';
+        document.getElementById('adminEmail').textContent = email;
+    }
+
+    // Charts
+    function initCharts() {
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Revenue (฿)',
+                    data: [120000, 150000, 140000, 180000, 200000, 220000, 195000],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Transaction Chart
+        const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+        new Chart(transactionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Transactions',
+                    data: [45, 52, 48, 61, 55, 67, 58],
+                    backgroundColor: '#8b5cf6'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Modal Functions
+    function openShopModal() {
+        document.getElementById('shopModal').classList.add('active');
+    }
+
+    function closeShopModal() {
+        document.getElementById('shopModal').classList.remove('active');
+        clearShopForm();
+    }
+
+    function clearShopForm() {
+        document.getElementById('shopName').value = '';
+        document.getElementById('shopEmail').value = '';
+        document.getElementById('shopPromptPay').value = '';
+        document.getElementById('shopPlan').value = 'pro';
+        document.getElementById('shopPassword').value = '';
+    }
+
+    function saveShop() {
+        const name = document.getElementById('shopName').value.trim();
+        const email = document.getElementById('shopEmail').value.trim();
+        const promptpay = document.getElementById('shopPromptPay').value.trim();
+        const plan = document.getElementById('shopPlan').value;
+
+        if (!name || !email || !promptpay) {
+            showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+            return;
+        }
+
+        // Simulate save
+        const newRow = `
+            <tr>
+                <td><strong>${name}</strong></td>
+                <td>Admin</td>
+                <td>${plan === 'pro' ? 'Pro' : 'Free'}</td>
+                <td>-</td>
+                <td><span class="badge badge-info">Pending Activation</span></td>
+                <td>
+                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 4px;">Delete</button>
+                </td>
+            </tr>
+        `;
+
+        document.getElementById('shopsTable').insertAdjacentHTML('beforeend', newRow);
+        showSuccess(`✅ สมัครให้ใช้งาน "${name}" สำเร็จ! (ส่งอีเมลให้แล้ว)`);
+        closeShopModal();
+    }
+
+    function openAffiliateModal() {
+        document.getElementById('affiliateModal').classList.add('active');
+    }
+
+    function closeAffiliateModal() {
+        document.getElementById('affiliateModal').classList.remove('active');
+    }
+
+    function saveAffiliate() {
+        const name = document.getElementById('affiliateName').value.trim();
+        const email = document.getElementById('affiliateEmail').value.trim();
+
+        if (!name || !email) {
+            showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+            return;
+        }
+
+        const newRow = `
+            <tr>
+                <td>#AFF-${Math.floor(Math.random() * 1000)}</td>
+                <td>${name}</td>
+                <td>${email}</td>
+                <td>0</td>
+                <td>฿0</td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button></td>
+            </tr>
+        `;
+
+        document.getElementById('affiliatesTable').insertAdjacentHTML('beforeend', newRow);
+        showSuccess(`✅ เพิ่ม Affiliate "${name}" สำเร็จ!`);
+        closeAffiliateModal();
+    }
+
+    function openUserModal() {
+        document.getElementById('userModal').classList.add('active');
+    }
+
+    function closeUserModal() {
+        document.getElementById('userModal').classList.remove('active');
+    }
+
+    function saveUser() {
+        const email = document.getElementById('userName').value.trim();
+        const name = document.getElementById('userFullName').value.trim();
+        const role = document.getElementById('userRole').value;
+
+        if (!email || !name) {
+            showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+            return;
+        }
+
+        const roleText = role === 'shop' ? 'Shop Owner' : role === 'affiliate' ? 'Affiliate' : 'Admin';
+        const newRow = `
+            <tr>
+                <td>${email}</td>
+                <td>${name}</td>
+                <td><span class="badge badge-info">${roleText}</span></td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td>
+                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Edit</button>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem; margin-left: 4px;">Ban</button>
+                </td>
+            </tr>
+        `;
+
+        document.getElementById('usersTable').insertAdjacentHTML('beforeend', newRow);
+        showSuccess(`✅ เพิ่มผู้ใช้งาน "${name}" สำเร็จ!`);
+        closeUserModal();
+    }
+
+    // Settings Functions
+    function saveTelegramSettings() {
+        showSuccess('✅ บันทึก Telegram Settings สำเร็จ!');
+    }
+
+    function saveSlipOcrSettings() {
+        showSuccess('✅ บันทึก Slip OCR Settings สำเร็จ!');
+    }
+
+    function saveStripeSettings() {
+        showSuccess('✅ บันทึก Stripe Settings สำเร็จ!');
+    }
+
+    function saveCommissionSettings() {
+        showSuccess('✅ บันทึก Commission Settings สำเร็จ!');
+    }
+
+    function editShop(id) {
+        openShopModal();
+    }
+
+    function deleteShop(id) {
+        if (confirm('คุณแน่ใจหรือว่าต้องการลบร้านค้านี้?')) {
+            showSuccess('✅ ลบร้านค้าสำเร็จ!');
+        }
+    }
+
+    // Utilities
+    function showSuccess(message) {
+        const el = document.getElementById('successMessage');
+        el.textContent = message;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    function showError(message) {
+        const el = document.getElementById('errorMessage');
+        el.textContent = message;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    function logout() {
+        if (confirm('คุณแน่ใจหรือว่าต้องการออกจากระบบ?')) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // Modal Close on Click Outside
+    window.addEventListener('click', function(e) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
